@@ -24,6 +24,7 @@
 package com.fearlesssniper.pdfutils.cli;
 
 import com.fearlesssniper.pdfutils.cli.common.PDFParameter;
+import com.fearlesssniper.pdfutils.cli.common.ImageOptions;
 import com.fearlesssniper.pdfutils.cli.common.PDFImageResolution;
 import com.fearlesssniper.pdfutils.util.PDDocExtra;
 import com.fearlesssniper.pdfutils.util.PDPageExtra;
@@ -73,10 +74,6 @@ public class PDFToWord implements Callable<Integer> {
     )
     private File outputWord;
 
-//    @Option(names = {"-d", "--dpi"},
-//            description = "The resolution of the drawn pages in dpi",
-//            defaultValue = "200")
-//    private float dpi;
     @Mixin
     private PDFImageResolution imageResolution;
     
@@ -99,12 +96,16 @@ public class PDFToWord implements Callable<Integer> {
             names = {"-s", "--size"},
             description = {
                 "Force the document size into a standard paper size",
-                "Instead of using the size of the PDF."
+                "Instead of using the size of the PDF.",
+                "Supported sizes: ${COMPLETION-CANDIDATES}",
             }
     )
     private PageSizes specifiedSize;
 
-    // TODO: Add option to embed jpg instead png
+    // Allows users to specify what type of images to be embedded
+    // in the Word document
+    @Mixin
+    private ImageOptions imageOptions;
     
     @ArgGroup(exclusive = false, multiplicity = "1")
     private PDFParameter pdfArgs;
@@ -136,10 +137,16 @@ public class PDFToWord implements Callable<Integer> {
                     var run = paragraph.createRun();
                     // Process the pictures
                     var byteStream = new ByteArrayOutputStream();
-                    ImageIO.write(pagesImages[i], "png", byteStream);
+                    ImageIO.write(pagesImages[i], this.imageOptions.imgType.getFormatName(), byteStream);
                     var byteArrayInputStream
                             = new ByteArrayInputStream(byteStream.toByteArray());
-                    run.addPicture(byteArrayInputStream, Document.PICTURE_TYPE_PNG,
+                    int imageType = Document.PICTURE_TYPE_JPEG; // Image type as specified by XWPF documents
+                    if (this.imageOptions.imgType == ImageOptions.ImageType.JPEG) {
+                        imageType = Document.PICTURE_TYPE_JPEG;
+                    } else if (this.imageOptions.imgType == ImageOptions.ImageType.PNG) {
+                        imageType = Document.PICTURE_TYPE_PNG;
+                    }
+                    run.addPicture(byteArrayInputStream, imageType,
                             "page" + i,
                             Units.toEMU(wordPageDimensions.width),
                             Units.toEMU(wordPageDimensions.height));
@@ -192,7 +199,6 @@ public class PDFToWord implements Callable<Integer> {
         return 0;
     }
 
-    // TODO: Remove when done
     public static void main(String[] args) {
         System.exit(new CommandLine(new PDFToWord()).execute(args));
     }

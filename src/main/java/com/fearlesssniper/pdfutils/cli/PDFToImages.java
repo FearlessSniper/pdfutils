@@ -24,6 +24,7 @@
 package com.fearlesssniper.pdfutils.cli;
 
 import com.fearlesssniper.pdfutils.cli.common.PDFParameter;
+import com.fearlesssniper.pdfutils.cli.common.ImageOptions;
 import com.fearlesssniper.pdfutils.cli.common.PDFImageResolution;
 import com.fearlesssniper.pdfutils.util.PDDocExtra;
 import java.io.File;
@@ -38,11 +39,11 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
- *
+ * Renders the pages of the PDF document into images.
  * @author fearlesssniper
  */
 @Command(
-        name = "toImage",
+        name = "to-image",
         description = "Convert the pages of the PDF to images."
 )
 public class PDFToImages implements Callable<Integer> {
@@ -56,28 +57,9 @@ public class PDFToImages implements Callable<Integer> {
     )
     private String filenamePrefix;
 
-    private enum ImageType {
-        JPEG(".jpg"), PNG(".png");
-        private final String fileExtension;
-
-        private ImageType(String fileExtensionString) {
-            this.fileExtension = fileExtensionString;
-        }
-
-        public String getFileExtension() {
-            return this.fileExtension;
-        }
-    }
-
-    @Option(
-            names = {"--type", "--image-type"},
-            description = {
-                "The type of the output image.",
-                "Valid values: ${COMPLETION-CANDIDATES}"
-            },
-            defaultValue = "JPEG"
-    )
-    private ImageType imgType;
+    // Allows users to specify what type of images to export
+    @Mixin
+    private ImageOptions imageOptions;
 
     @ArgGroup(exclusive = false, multiplicity = "1")
     private PDFParameter pdfArgs;
@@ -100,9 +82,9 @@ public class PDFToImages implements Callable<Integer> {
             for (int i = 0; i < pagesImage.length; i++) {
                 // PREFIX_i.(jpg/png), e.g. pdf_0.jpg
                 var outputFile = new File(
-                        fileBaseName + "_" + i + this.imgType.getFileExtension());
+                        fileBaseName + "_" + i + this.imageOptions.imgType.getFileExtension());
                 ImageIO.write(
-                        pagesImage[i], this.imgType.toString(), outputFile);
+                        pagesImage[i], this.imageOptions.imgType.toString(), outputFile);
             }
         }
         return 0;

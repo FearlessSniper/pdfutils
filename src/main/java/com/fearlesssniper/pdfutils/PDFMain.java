@@ -33,7 +33,6 @@ import com.fearlesssniper.pdfutils.cli.PDFToImages;
 import com.fearlesssniper.pdfutils.cli.PDFToWord;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.HelpCommand;
 
 /**
  * Main command
