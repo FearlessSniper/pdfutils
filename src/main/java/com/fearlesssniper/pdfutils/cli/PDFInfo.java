@@ -33,7 +33,6 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 /**
  * Command to retrieve metadata from a PDF document.

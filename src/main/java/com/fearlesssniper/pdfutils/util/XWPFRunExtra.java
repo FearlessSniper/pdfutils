@@ -50,9 +50,15 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 
 /**
  * Methods for adding content to a run
- *
+ * 
+ * This class was intended to try to add images to the Word document by anchoring
+ * mode. However, the problem turned out to not be in anchor vs inline, so this
+ * class is not used.
+ * 
+ * @deprecated Not used by any code
  * @author fearlesssniper
  */
+@Deprecated
 public class XWPFRunExtra {
 
     // The internal representation of a run

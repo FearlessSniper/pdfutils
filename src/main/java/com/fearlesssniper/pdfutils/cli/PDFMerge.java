@@ -8,7 +8,6 @@ import com.fearlesssniper.pdfutils.util.PDDocExtra;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
