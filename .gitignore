@@ -61,3 +61,11 @@ hs_err_pid*
 # Image files
 *.png
 *.jpg
+
+# Ignore netbeans config
+nbactions*.xml
+nb-configuration.xml
+
+# Folder containing files for testing
+test-files/
+

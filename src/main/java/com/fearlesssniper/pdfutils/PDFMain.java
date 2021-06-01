@@ -55,7 +55,6 @@ import picocli.CommandLine.HelpCommand;
             PDFToImages.class,
             PDFReorder.class,
             PDFRotate.class,
-            HelpCommand.class
         }
 )
 public class PDFMain {

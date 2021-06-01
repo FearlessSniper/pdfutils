@@ -28,10 +28,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHeaderFooter;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
@@ -39,7 +37,6 @@ import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
@@ -218,6 +215,10 @@ public class XWPFRunExtra {
         return picture;
     }
     
+    /**
+     * @deprecated not used anymore
+     */
+    @Deprecated
     public static void main(String[] args) throws IOException {
         File imageFile = new File(args[0]);
         byte[] byteArray = Files.readAllBytes(imageFile.toPath());

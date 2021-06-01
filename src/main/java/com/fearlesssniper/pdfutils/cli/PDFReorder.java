@@ -59,20 +59,23 @@ public class PDFReorder implements Callable<Integer> {
                     "the third page of the final document should be the",
                     "second page of the document, etc. Hence the order by",
                     " position should be 1, 4, 2, 5, 3"
-                }
+                },
+                arity = "1..*"
         )
         public List<Integer> orderByPosition;
 
         @CommandLine.Option(
                 names = {
-                    "-o", "--order", "--ordering", "--by-original-position"
+                    "--order", "--ordering", "--by-original-position"
                 },
                 description = {
                     "Specify the order by the original position of the page.",
                     "e.g. A document with 4 pages have the ordering mixed up,",
                     "the second page is the third page, the third page is in",
                     "second. In that case, specify '1 3 2 4' to arrange it",
-                    "back to correct order.",}
+                    "back to correct order.",
+                },
+                arity = "1..*"
         )
         public List<Integer> orderByOriginalPosition;
     }
@@ -114,13 +117,12 @@ public class PDFReorder implements Callable<Integer> {
                 // An error is triggered when original position and
                 // position is both set; Also triggered when none is specified
                 if (orderingGroup.orderByOriginalPosition != null) {
-                    orderingGroup.orderByPosition = new ArrayList();
+                    orderingGroup.orderByPosition = new ArrayList<>();
                     for (int i = 0;
                             i < orderingGroup.orderByOriginalPosition.size();
                             i++) {
-                        orderingGroup.orderByPosition.set(
-                                i,
-                                orderingGroup.orderByOriginalPosition.indexOf(i + 1) + 1);
+                        orderingGroup.orderByPosition.add(
+                        		orderingGroup.orderByOriginalPosition.indexOf(i + 1) + 1);
                     }
                 }
                 for (var i : orderingGroup.orderByPosition) {

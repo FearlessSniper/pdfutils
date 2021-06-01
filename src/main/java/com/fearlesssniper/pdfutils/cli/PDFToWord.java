@@ -104,6 +104,8 @@ public class PDFToWord implements Callable<Integer> {
     )
     private PageSizes specifiedSize;
 
+    // TODO: Add option to embed jpg instead png
+    
     @ArgGroup(exclusive = false, multiplicity = "1")
     private PDFParameter pdfArgs;
 

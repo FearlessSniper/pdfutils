@@ -37,7 +37,9 @@ public class PDFParameter {
      * An argument group for specifying arguments for reading PDF documents.
      * A document must provide a path while a password is not a must.
      */
-    @Parameters(index = "0") public File docFile;
+    @Parameters(description = "The PDF document", index = "0")
+    public File docFile;
+
     @Option(
         names = {"-p", "--password"},
         description = "The password for the PDF document (if applicable)",
