@@ -1,292 +1,201 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.fearlesssniper.pdfutils</groupId>
-	<artifactId>pdfutils</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<profiles>
-		<!-- Native image building not supported on Windows or MacOS -->
-		<!-- GraalVM does not support awt in native-image on Windows and MacOS -->
-		<!-- Using really executable jar to distribute the app on Windows and MacOS -->
-		<profile>
-			<id>Linux</id>
-			<activation>
-				<os>
-					<family>unix</family>
-				</os>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.graalvm.sdk</groupId>
-					<artifactId>graal-sdk</artifactId>
-					<version>21.0.0.2</version>
-					<scope>provided</scope>
-				</dependency>
-			</dependencies>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.graalvm.nativeimage</groupId>
-						<artifactId>native-image-maven-plugin</artifactId>
-						<version>21.0.0.2</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>native-image</goal>
-								</goals>
-								<phase>package</phase>
-							</execution>
-						</executions>
-						<configuration>
-							<mainClass>${project.mainClass}</mainClass>
-							<imageName>pdfutil</imageName>
-							<buildArgs>
-								--no-fallback
-								--static
-								--allow-incomplete-classpath
-							</buildArgs>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>MacOS</id>
-			<activation>
-				<os>
-					<family>mac</family>
-				</os>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.skife.maven</groupId>
-						<artifactId>really-executable-jar-maven-plugin</artifactId>
-						<version>1.4.1</version>
-						<configuration>
-							<!-- value of flags will be interpolated into the java invocation -->
-							<!-- as "java $flags -jar ..." -->
-							<flags>-Xmx1G</flags>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.fearlesssniper.pdfutils</groupId>
+    <artifactId>pdfutils</artifactId>
+    <version>1.1</version>
+    <profiles>
+        <!-- Native image building not supported on Windows or MacOS -->
+        <!-- GraalVM does not support awt in native-image on Windows and MacOS -->
+        <!-- Using really executable jar to distribute the app on Windows and MacOS -->
+        <profile>
+            <id>Linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.graalvm.sdk</groupId>
+                    <artifactId>graal-sdk</artifactId>
+                    <version>21.0.0.2</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.nativeimage</groupId>
+                        <artifactId>native-image-maven-plugin</artifactId>
+                        <version>21.0.0.2</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>native-image</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>${project.mainClass}</mainClass>
+                            <imageName>pdfutils</imageName>
+                            <buildArgs>
+                                --no-fallback
+                                --static
+                                --allow-incomplete-classpath
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <properties>
+        <!-- Using Java 11 -->
+        <maven.compiler.release>11</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.mainClass>com.fearlesssniper.pdfutils.PDFMain</project.mainClass>
+        <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
+        <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>4.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.23</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-full</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.0-alpha1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.0-alpha1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <!-- Add for annotation processor plugin -->
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <annotationProcessorPath>
+                            <groupId>info.picocli</groupId>
+                            <artifactId>picocli-codegen</artifactId>
+                            <version>4.6.1</version>
+                        </annotationProcessorPath>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
+                        <arg>-Averbose</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.fearlesssniper.pdfutils.PDFMain</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <skipAssembly>false</skipAssembly>
+                </configuration>
+                <executions>
+                    <execution>
+                        <!--Bind execution to package phase -->
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Make launcher scripts for all OS-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>2.1.0</version>
+                <configuration>
+                    <programs>
+                        <program>
+                            <mainClass>${project.mainClass}</mainClass>
+                            <id>${project.artifactId}</id>
+                        </program>
+                    </programs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-launcher-scripts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-							<!-- (optional) name for binary executable, if not set will just -->
-							<!-- make the regular jar artifact executable -->
-							<programFile>pdfutils</programFile>
-
-							<!-- (optional) support other packaging formats than jar -->
-							<!-- <allowOtherTypes>true</allowOtherTypes> -->
-
-							<!-- (optional) name for a file that will define what script gets -->
-							<!-- embedded into the executable jar. This can be used to -->
-							<!-- override the default startup script which is -->
-							<!-- `#!/bin/sh -->
-							<!-- -->
-							<!-- exec java " + flags + " -jar "$0" "$@" -->
-							<!-- <scriptFile>src/packaging/someScript.extension</scriptFile> -->
-						</configuration>
-
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>really-executable-jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>Windows</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.panteleyev</groupId>
-						<artifactId>jpackage-maven-plugin</artifactId>
-						<configuration>
-							<mainJar>${project.name}-${project.version}.jar</mainJar>
-							<mainClass>${project.mainClass}</mainClass>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>jpackage</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-	<properties>
-		<!-- Using Java 11 -->
-		<maven.compiler.release>11</maven.compiler.release>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.mainClass>com.fearlesssniper.pdfutils.PDFMain</project.mainClass>
-		<junit.version>5.6.0</junit.version>
-		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
-		<maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
-		<checkstyle.version>8.29</checkstyle.version>
-		<checkstyle-rules.version>4.0.1</checkstyle-rules.version>
-		<maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
-		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
-		<maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
-		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-		<!-- JaCoCo thresholds. Increase gradually as you add tests. -->
-		<!-- <jacoco.unit-tests.limit.instruction-ratio>0%</jacoco.unit-tests.limit.instruction-ratio> 
-			<jacoco.unit-tests.limit.branch-ratio>0%</jacoco.unit-tests.limit.branch-ratio> 
-			<jacoco.unit-tests.limit.class-complexity>20</jacoco.unit-tests.limit.class-complexity> 
-			<jacoco.unit-tests.limit.method-complexity>5</jacoco.unit-tests.limit.method-complexity> -->
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>info.picocli</groupId>
-			<artifactId>picocli</artifactId>
-			<version>4.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-			<version>2.0.22</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>5.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>5.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml-full</artifactId>
-			<version>5.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.8.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>2.0.0-alpha1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>2.0.0-alpha1</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.2</version>
-		</dependency>
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<!-- Add for annotation processor plugin -->
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<annotationProcessorPaths>
-						<annotationProcessorPath>
-							<groupId>info.picocli</groupId>
-							<artifactId>picocli-codegen</artifactId>
-							<version>4.6.1</version>
-						</annotationProcessorPath>
-					</annotationProcessorPaths>
-					<compilerArgs>
-						<arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
-						<arg>-Averbose</arg>
-					</compilerArgs>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.1.0</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.fearlesssniper.pdfutils.PDFMain</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<skipAssembly>false</skipAssembly>
-				</configuration>
-				<executions>
-					<execution>
-						<!--Bind execution to package phase -->
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-enforcer-plugin</artifactId> 
-				<version>${maven-enforcer-plugin.version}</version> <executions> <execution> 
-				<goals> <goal>enforce</goal> </goals> <configuration> <rules> <requireMavenVersion> 
-				<version>3.6.3</version> </requireMavenVersion> </rules> <fail>true</fail> 
-				</configuration> </execution> </executions> </plugin> -->
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-checkstyle-plugin</artifactId> 
-				<version>${maven-checkstyle-plugin.version}</version> <dependencies> <dependency> 
-				<groupId>com.puppycrawl.tools</groupId> <artifactId>checkstyle</artifactId> 
-				<version>${checkstyle.version}</version> </dependency> <dependency> <groupId>com.github.ngeor</groupId> 
-				<artifactId>checkstyle-rules</artifactId> <version>${checkstyle-rules.version}</version> 
-				</dependency> </dependencies> <configuration> <configLocation>com/github/ngeor/checkstyle.xml</configLocation> 
-				<includeTestSourceDirectory>true</includeTestSourceDirectory> <skip>${skipTests}</skip> 
-				Skipping checkstyle <skip>true</skip> </configuration> <executions> <execution> 
-				<id>checkstyle</id> <phase>validate</phase> <goals> <goal>check</goal> </goals> 
-				</execution> </executions> </plugin> -->
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-surefire-plugin</artifactId> 
-				<version>${maven-surefire-plugin.version}</version> </plugin> -->
-			<!-- <plugin> <groupId>org.jacoco</groupId> <artifactId>jacoco-maven-plugin</artifactId> 
-				<version>${jacoco-maven-plugin.version}</version> <executions> <execution> 
-				<id>pre-unit-test</id> <goals> <goal>prepare-agent</goal> </goals> </execution> 
-				<execution> <id>post-unit-test</id> <phase>test</phase> <goals> <goal>report</goal> 
-				</goals> </execution> <execution> <id>check-unit-test</id> <phase>test</phase> 
-				<goals> <goal>check</goal> </goals> <configuration> <dataFile>${project.build.directory}/jacoco.exec</dataFile> 
-				<rules> <rule> <element>BUNDLE</element> <limits> <limit> <counter>INSTRUCTION</counter> 
-				<value>COVEREDRATIO</value> <minimum>${jacoco.unit-tests.limit.instruction-ratio}</minimum> 
-				</limit> <limit> <counter>BRANCH</counter> <value>COVEREDRATIO</value> <minimum>${jacoco.unit-tests.limit.branch-ratio}</minimum> 
-				</limit> </limits> </rule> <rule> <element>CLASS</element> <limits> <limit> 
-				<counter>COMPLEXITY</counter> <value>TOTALCOUNT</value> <maximum>${jacoco.unit-tests.limit.class-complexity}</maximum> 
-				</limit> </limits> </rule> <rule> <element>METHOD</element> <limits> <limit> 
-				<counter>COMPLEXITY</counter> <value>TOTALCOUNT</value> <maximum>${jacoco.unit-tests.limit.method-complexity}</maximum> 
-				</limit> </limits> </rule> </rules> </configuration> </execution> </executions> 
-				</plugin> -->
-		</plugins>
-	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven-javadoc-plugin.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<configLocation>config/sun_checks.xml</configLocation>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>config/sun_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

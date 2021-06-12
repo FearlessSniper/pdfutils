@@ -21,41 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.fearlesssniper.pdfutils.cli.common;
+package com.fearlesssniper.pdfutils;
+import java.util.Properties;
 
-import picocli.CommandLine.Option;
+import picocli.CommandLine.IVersionProvider;
 
 /**
- * Two types of images for users to choose from
+ * Retrieves the version information from pom.xml
  */
-public class ImageOptions {
-    public enum ImageType {
-        JPEG(".jpg", "jpg"), PNG(".png", "png");
-        private final String fileExtension;
-        private final String formatName;
-    
-        private ImageType(String fileExtensionString, String formatName) {
-            this.fileExtension = fileExtensionString;
-            this.formatName = formatName;
-        }
-    
-        public String getFileExtension() {
-            return this.fileExtension;
-        }
+public class AppVersion implements IVersionProvider {
 
-        public String getFormatName() {
-            return this.formatName;
-        }
+    @Override
+    public String[] getVersion() throws Exception {
+        Properties properties = new Properties();
+        properties.load(this.getClass().getClassLoader().getResourceAsStream("project.properties"));
+        return new String[] {
+            "${COMMAND-FULL-NAME} " + properties.getProperty("version")
+        };
     }
-
-    // JPEG is used by default
-    @Option(
-            names = {"--type", "--image-type"},
-            description = {
-                "The type of the output image.",
-                "Valid values: ${COMPLETION-CANDIDATES}"
-            },
-            defaultValue = "JPEG"
-    )
-    public ImageType imgType;
+    
 }

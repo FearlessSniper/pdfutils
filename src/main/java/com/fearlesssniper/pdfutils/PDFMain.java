@@ -42,7 +42,7 @@ import picocli.CommandLine.Command;
 @Command(
         name = "pdfutils",
         description = "A collection of utilities for modifying PDF documents.",
-        version = "pdfutils 1.0-SNAPSHOT",
+        versionProvider = AppVersion.class,
         synopsisSubcommandLabel = "COMMAND",
         mixinStandardHelpOptions = true,
         subcommands = {
